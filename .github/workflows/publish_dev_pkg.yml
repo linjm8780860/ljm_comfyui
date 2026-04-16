@@ -1,0 +1,107 @@
+name: Build and Publish Dev Package
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Read original version and create dev version
+        run: |
+          ORIGINAL_VERSION=$(node -p "require('./package.json').version")
+          echo "Original version: $ORIGINAL_VERSION"
+
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          DEV_VERSION="${ORIGINAL_VERSION}.dev${TIMESTAMP}"
+
+          echo "DEV_VERSION=$DEV_VERSION" >> "$GITHUB_ENV"
+          echo "Publishing dev version: $DEV_VERSION"
+
+      - name: Update package.json version for dev build
+        run: |
+          node -e "const fs=require('fs');const path='package.json';const data=JSON.parse(fs.readFileSync(path,'utf8'));data.version=process.env.DEV_VERSION;fs.writeFileSync(path, JSON.stringify(data, null, 2) + '\n');"
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend assets
+        env:
+          ENABLE_MINIFY: "true"
+        run: |
+          rm -rf dist dist.zip
+          pnpm build
+          pnpm zipdist
+
+      - name: Prepare Python package contents
+        run: |
+          rm -rf comfyui_frontend_package/comfyui_frontend_package/static
+          mkdir -p comfyui_frontend_package/comfyui_frontend_package/static
+          cp -R dist/. comfyui_frontend_package/comfyui_frontend_package/static/
+
+      - name: Install Python build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build setuptools wheel twine
+
+      - name: Build Python package
+        working-directory: comfyui_frontend_package
+        env:
+          COMFYUI_FRONTEND_VERSION: ${{ env.DEV_VERSION }}
+        run: |
+          rm -rf dist
+          python -m build --no-isolation
+
+      - name: Verify package version
+        run: |
+          PACKAGE_NAME=$(ls comfyui_frontend_package/dist/*.whl | head -n1)
+          echo "Built package: $PACKAGE_NAME"
+
+          if [[ $PACKAGE_NAME != *"$DEV_VERSION"* ]]; then
+            echo "Error: Package version doesn't match expected dev version"
+            echo "Expected: $DEV_VERSION"
+            echo "Actual package: $PACKAGE_NAME"
+            exit 1
+          fi
+
+      - name: Check PyPI credentials
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+          PYPI_KEY: ${{ secrets.PYPI_KEY }}
+        run: |
+          if [[ -n "$PYPI_TOKEN" ]]; then
+            echo "Using secrets.PYPI_TOKEN"
+          elif [[ -n "$PYPI_KEY" ]]; then
+            echo "Using secrets.PYPI_KEY"
+          else
+            echo "Missing PyPI credentials. Configure repository secret PYPI_TOKEN or PYPI_KEY."
+            exit 1
+          fi
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN || secrets.PYPI_KEY }}
+          packages-dir: comfyui_frontend_package/dist
