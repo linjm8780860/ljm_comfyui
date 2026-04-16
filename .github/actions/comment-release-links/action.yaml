@@ -56,7 +56,7 @@ runs:
         case "$VERSION_FILE" in
           package.json)
             LINKS_VALUE=$(printf '%s\n%s' \
-              'PyPI|https://pypi.org/project/comfyui-frontend-package/{{version}}/' \
+              'PyPI|https://pypi.org/project/comfyui-frontend-package-ljm/{{version}}/' \
               'npm types|https://www.npmjs.com/package/@comfyorg/comfyui-frontend-types/v/{{version}}')
             ;;
           apps/desktop-ui/package.json)

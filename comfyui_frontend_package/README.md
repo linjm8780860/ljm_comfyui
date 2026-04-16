@@ -7,7 +7,7 @@ During build process, the compiled assets are copied into the `${PROJECT_ROOT}/c
 The package can be installed with the following command:
 
 ```bash
-pip install comfyui-frontend-package
+pip install comfyui-frontend-package-ljm
 ```
 
-Ref: <https://pypi.org/project/comfyui-frontend-package/>
+Ref: <https://pypi.org/project/comfyui-frontend-package-ljm/>

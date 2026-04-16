@@ -2,7 +2,7 @@ import os
 from setuptools import setup, find_packages
 
 setup(
-    name="comfyui_frontend_package",
+    name="comfyui-frontend-package-ljm",
     version=os.getenv("COMFYUI_FRONTEND_VERSION") or "0.1.0",
     packages=find_packages(),
     include_package_data=True,
