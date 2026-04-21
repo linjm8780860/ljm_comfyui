@@ -7,6 +7,7 @@ import {
   isManagedFrontendAssetUrl,
   isManagedStaticAssetPath,
   isManagedStaticDataPath,
+  isThirdPartyExtensionScriptPath,
   normalizeScopePath,
   shouldActivateWaitingServiceWorker,
   stripScopePath
@@ -84,6 +85,27 @@ describe('serviceWorkerPaths', () => {
     expect(isManagedStaticDataPath('/ComfyUI/assets/app.js', '/ComfyUI/')).toBe(
       false
     )
+  })
+
+  it('classifies third-party extension scripts separately from other extension assets', () => {
+    expect(
+      isThirdPartyExtensionScriptPath(
+        '/ComfyUI/extensions/foo/index.js',
+        '/ComfyUI/'
+      )
+    ).toBe(true)
+    expect(
+      isThirdPartyExtensionScriptPath(
+        '/ComfyUI/extensions/foo/chunk.mjs',
+        '/ComfyUI/'
+      )
+    ).toBe(true)
+    expect(
+      isThirdPartyExtensionScriptPath(
+        '/ComfyUI/extensions/foo/preview.webp',
+        '/ComfyUI/'
+      )
+    ).toBe(false)
   })
 
   it('only flags same-origin managed assets for stale-chunk recovery', () => {

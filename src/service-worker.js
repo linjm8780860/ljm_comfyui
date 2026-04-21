@@ -16,6 +16,7 @@ import {
   isBypassedServiceWorkerPath,
   isManagedStaticAssetPath,
   isManagedStaticDataPath,
+  isThirdPartyExtensionScriptPath,
   normalizeScopePath
 } from '@/services/pwa/serviceWorkerPaths'
 import {
@@ -28,6 +29,7 @@ import {
 const PAGE_CACHE = getRuntimeCacheName('pages')
 const STATIC_CACHE = getRuntimeCacheName('static')
 const DATA_CACHE = getRuntimeCacheName('data')
+const EXTENSION_JS_CACHE = getRuntimeCacheName('extension-js')
 const SCOPE_PATH = normalizeScopePath(new URL(self.registration.scope).pathname)
 
 clientsClaim()
@@ -94,6 +96,23 @@ registerRoute(
       new ExpirationPlugin({
         maxEntries: 64,
         maxAgeSeconds: 7 * 24 * 60 * 60
+      })
+    ]
+  })
+)
+
+registerRoute(
+  ({ request, url }) =>
+    request.method === 'GET' &&
+    url.origin === self.location.origin &&
+    isThirdPartyExtensionScriptPath(url.pathname, SCOPE_PATH),
+  new CacheFirst({
+    cacheName: EXTENSION_JS_CACHE,
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 512,
+        maxAgeSeconds: 30 * 24 * 60 * 60,
+        purgeOnQuotaError: true
       })
     ]
   })

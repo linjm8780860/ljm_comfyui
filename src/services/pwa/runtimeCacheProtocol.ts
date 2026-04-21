@@ -1,4 +1,9 @@
-export const RUNTIME_CACHE_GROUPS = ['pages', 'static', 'data'] as const
+export const RUNTIME_CACHE_GROUPS = [
+  'pages',
+  'static',
+  'data',
+  'extension-js'
+] as const
 
 export type RuntimeCacheGroup = (typeof RUNTIME_CACHE_GROUPS)[number]
 
@@ -7,17 +12,20 @@ export const PURGE_RUNTIME_CACHES_MESSAGE = 'PURGE_RUNTIME_CACHES'
 const RUNTIME_CACHE_PREFIXES: Record<RuntimeCacheGroup, string> = {
   pages: 'comfyui-frontend-pages',
   static: 'comfyui-frontend-static',
-  data: 'comfyui-frontend-data'
+  data: 'comfyui-frontend-data',
+  'extension-js': 'comfyui-frontend-extension-js'
 }
 
 const runtimeCacheGroupSet = new Set<string>(RUNTIME_CACHE_GROUPS)
 
-function getRuntimeCacheVersion(): string {
-  return __COMFYUI_SW_CACHE_VERSION__
+function getRuntimeCacheVersion(group: RuntimeCacheGroup): string {
+  return group === 'extension-js'
+    ? __COMFYUI_EXTENSION_CACHE_VERSION__
+    : __COMFYUI_SW_CACHE_VERSION__
 }
 
 export function getRuntimeCacheName(group: RuntimeCacheGroup): string {
-  return `${RUNTIME_CACHE_PREFIXES[group]}-${getRuntimeCacheVersion()}`
+  return `${RUNTIME_CACHE_PREFIXES[group]}-${getRuntimeCacheVersion(group)}`
 }
 
 export function getRuntimeCacheNames(): string[] {
