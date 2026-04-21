@@ -106,7 +106,7 @@ registerRoute(
     request.method === 'GET' &&
     url.origin === self.location.origin &&
     isThirdPartyExtensionScriptPath(url.pathname, SCOPE_PATH),
-  new CacheFirst({
+  new NetworkFirst({
     cacheName: EXTENSION_JS_CACHE,
     plugins: [
       new ExpirationPlugin({
