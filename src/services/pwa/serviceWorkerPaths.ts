@@ -97,18 +97,6 @@ export function isManagedStaticDataPath(
   )
 }
 
-export function isThirdPartyExtensionScriptPath(
-  pathname: string,
-  scopePath: string
-): boolean {
-  const relativePath = getRelativePath(pathname, scopePath)
-
-  if (!relativePath.startsWith('/extensions/')) return false
-
-  const extension = getExtension(relativePath)
-  return extension === 'js' || extension === 'mjs'
-}
-
 export function isManagedStaticAssetPath(
   pathname: string,
   scopePath: string

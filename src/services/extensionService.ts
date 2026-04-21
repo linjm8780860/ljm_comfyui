@@ -14,7 +14,6 @@ import type { ComfyExtension } from '@/types/comfy'
 import type { AuthUserInfo } from '@/types/authTypes'
 import { app } from '@/scripts/app'
 import type { ComfyApp } from '@/scripts/app'
-import { appendExtensionCacheVersion } from '@/services/extensionImportUrl'
 
 export const useExtensionService = () => {
   const extensionStore = useExtensionStore()
@@ -45,14 +44,7 @@ export const useExtensionService = () => {
         .filter((extension) => !extension.includes('extensions/core'))
         .map(async (ext) => {
           try {
-            await import(
-              /* @vite-ignore */
-              appendExtensionCacheVersion(
-                api.fileURL(ext),
-                __COMFYUI_EXTENSION_CACHE_VERSION__,
-                window.location.origin
-              )
-            )
+            await import(/* @vite-ignore */ api.fileURL(ext))
           } catch (error) {
             console.error('Error loading extension', ext, error)
           }

@@ -74,9 +74,6 @@ const SERVICE_WORKER_CACHE_VERSION =
     ? GIT_COMMIT
     : process.env.npm_package_version || 'unknown')
 
-const EXTENSION_CACHE_VERSION =
-  process.env.FRONTEND_EXTENSION_CACHE_VERSION || Date.now().toString()
-
 // Disable Vue DevTools for production cloud distribution
 const DISABLE_VUE_PLUGINS =
   process.env.DISABLE_VUE_PLUGINS === 'true' ||
@@ -612,7 +609,6 @@ export default defineConfig({
       process.env.npm_package_version
     ),
     __COMFYUI_SW_CACHE_VERSION__: JSON.stringify(SERVICE_WORKER_CACHE_VERSION),
-    __COMFYUI_EXTENSION_CACHE_VERSION__: JSON.stringify(EXTENSION_CACHE_VERSION),
     __SENTRY_ENABLED__: JSON.stringify(
       !(process.env.NODE_ENV === 'development' || !process.env.SENTRY_DSN)
     ),
