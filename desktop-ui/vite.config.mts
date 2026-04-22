@@ -15,7 +15,7 @@ dotenv.config()
 
 const projectRoot = fileURLToPath(new URL('.', import.meta.url))
 
-const SHOULD_MINIFY = process.env.ENABLE_MINIFY === 'true'
+const SHOULD_MINIFY = process.env.ENABLE_MINIFY !== 'false'
 const VITE_REMOTE_DEV = process.env.VITE_REMOTE_DEV === 'true'
 const DISABLE_VUE_PLUGINS = process.env.DISABLE_VUE_PLUGINS === 'true'
 

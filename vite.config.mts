@@ -23,7 +23,7 @@ import { comfyAPIPlugin } from './build/plugins'
 dotenvConfig()
 
 const IS_DEV = process.env.NODE_ENV === 'development'
-const SHOULD_MINIFY = process.env.ENABLE_MINIFY === 'true'
+const SHOULD_MINIFY = process.env.ENABLE_MINIFY !== 'false'
 const ANALYZE_BUNDLE = process.env.ANALYZE_BUNDLE === 'true'
 // vite dev server will listen on all addresses, including LAN and public addresses
 const VITE_REMOTE_DEV = process.env.VITE_REMOTE_DEV === 'true'
