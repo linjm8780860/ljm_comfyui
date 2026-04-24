@@ -103,6 +103,10 @@ registerRoute(
 )
 
 registerRoute(
+  ({ request, url }) =>
+    request.method === 'GET' &&
+    url.origin === self.location.origin &&
+    isManagedStaticDataPath(url.pathname, SCOPE_PATH),
   new StaleWhileRevalidate({
     cacheName: DATA_CACHE,
     plugins: [
