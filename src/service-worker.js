@@ -14,6 +14,7 @@ import {
 
 import {
   isBypassedServiceWorkerPath,
+  isExtensionPath,
   isManagedStaticAssetPath,
   isManagedStaticDataPath,
   normalizeScopePath
@@ -28,6 +29,7 @@ import {
 const PAGE_CACHE = getRuntimeCacheName('pages')
 const STATIC_CACHE = getRuntimeCacheName('static')
 const DATA_CACHE = getRuntimeCacheName('data')
+const EXTENSIONS_CACHE = getRuntimeCacheName('extensions')
 const SCOPE_PATH = normalizeScopePath(new URL(self.registration.scope).pathname)
 
 clientsClaim()
@@ -87,7 +89,20 @@ registerRoute(
   ({ request, url }) =>
     request.method === 'GET' &&
     url.origin === self.location.origin &&
-    isManagedStaticDataPath(url.pathname, SCOPE_PATH),
+    isExtensionPath(url.pathname, SCOPE_PATH),
+  new CacheFirst({
+    cacheName: EXTENSIONS_CACHE,
+    plugins: [
+      new ExpirationPlugin({
+        maxEntries: 1024,
+        maxAgeSeconds: 30 * 24 * 60 * 60,
+        purgeOnQuotaError: true
+      })
+    ]
+  })
+)
+
+registerRoute(
   new StaleWhileRevalidate({
     cacheName: DATA_CACHE,
     plugins: [

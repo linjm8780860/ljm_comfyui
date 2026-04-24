@@ -68,6 +68,10 @@ if (!GIT_COMMIT) {
   }
 }
 
+const EXTENSIONS_VERSION =
+  process.env.EXTENSIONS_VERSION ||
+  new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14)
+
 const SERVICE_WORKER_CACHE_VERSION =
   process.env.FRONTEND_CACHE_VERSION ||
   (GIT_COMMIT !== 'unknown'
@@ -617,7 +621,8 @@ export default defineConfig({
     __ALGOLIA_API_KEY__: JSON.stringify(process.env.ALGOLIA_API_KEY || ''),
     __USE_PROD_CONFIG__: process.env.USE_PROD_CONFIG === 'true',
     __DISTRIBUTION__: JSON.stringify(DISTRIBUTION),
-    __IS_NIGHTLY__: JSON.stringify(IS_NIGHTLY)
+    __IS_NIGHTLY__: JSON.stringify(IS_NIGHTLY),
+    __COMFYUI_EXTENSIONS_VERSION__: JSON.stringify(EXTENSIONS_VERSION)
   },
 
   resolve: {

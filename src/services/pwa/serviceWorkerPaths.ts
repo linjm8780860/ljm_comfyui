@@ -21,7 +21,6 @@ const STATIC_ASSET_EXTENSIONS = new Set([
 const BYPASSED_PATH_PREFIXES = [
   '/api',
   '/docs',
-  '/extensions',
   '/internal',
   '/workflow_templates'
 ]
@@ -78,6 +77,16 @@ export function isBypassedServiceWorkerPath(
 
   return BYPASSED_PATH_PREFIXES.some(
     (prefix) => relativePath === prefix || relativePath.startsWith(`${prefix}/`)
+  )
+}
+
+export function isExtensionPath(
+  pathname: string,
+  scopePath: string
+): boolean {
+  const relativePath = getRelativePath(pathname, scopePath)
+  return (
+    relativePath === '/extensions' || relativePath.startsWith('/extensions/')
   )
 }
 
