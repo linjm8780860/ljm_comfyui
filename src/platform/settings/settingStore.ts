@@ -1,4 +1,3 @@
-import { retry } from 'es-toolkit'
 import _ from 'es-toolkit/compat'
 import { until, useAsyncState } from '@vueuse/core'
 import { defineStore } from 'pinia'
@@ -61,9 +60,13 @@ export const useSettingStore = defineStore('setting', () => {
           'Setting values must be loaded before any setting is registered.'
         )
       }
-      settingValues.value = await retry(() => api.getSettings(), {
-        retries: 3,
-        delay: (attempt) => Math.min(1000 * Math.pow(2, attempt), 8000)
+      const SETTINGS_TIMEOUT_MS = 8000
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('getSettings timeout')), SETTINGS_TIMEOUT_MS)
+      )
+      settingValues.value = await Promise.race([api.getSettings(), timeoutPromise]).catch((e) => {
+        console.warn('Failed to load settings, using defaults:', e)
+        return {} as Settings
       })
       await migrateZoomThresholdToFontSize()
     },

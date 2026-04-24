@@ -448,7 +448,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
     if (isSyncReady.value) return
 
     if (isSyncLoading.value) {
-      await until(isSyncLoading).toBe(false)
+      await until(isSyncLoading).toBe(false, { timeout: 10000, throwOnTimeout: false })
       return
     }
 
