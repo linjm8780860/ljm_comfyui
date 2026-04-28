@@ -1,30 +1,5 @@
 @import '@comfyorg/design-system/css/style.css';
 
-.p-autocomplete-overlay,
-.p-autocomplete-input-multiple {
-  --p-autocomplete-background: var(--comfy-input-bg);
-  --p-autocomplete-overlay-background: var(--comfy-menu-bg);
-  color: var(--input-text);
-}
-
-.litegraph.litecontextmenu,
-.litegraph.litesearchbox {
-  background-color: #2e2e2e;
-  color: #aaa;
-}
-
-.litegraph.litesearchbox input,
-.litegraph.litesearchbox select,
-.litegraph.litecontextmenu input {
-  background-color: #000;
-  color: #fff;
-}
-
-.litegraph.lite-search-item {
-  background-color: rgb(0 0 0 / 50%);
-  color: #fff;
-}
-
 @media (prefers-reduced-motion: no-preference) {
   /* List transition animations */
   .list-scale-move,
