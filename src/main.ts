@@ -22,13 +22,14 @@ import App from './App.vue'
 import './assets/css/style.css'
 import { i18n } from './i18n'
 
-console.log('%c1.39.19', 
+console.log(
+  '%c1.39.19',
   'font-size: 40px;' +
-  'background: linear-gradient(to right, #4776e6, #8e54e9);' +
-  'color: white;' +
-  'padding: 8px 16px;' +
-  'border-radius: 8px'
-);
+    'background: linear-gradient(to right, #4776e6, #8e54e9);' +
+    'color: white;' +
+    'padding: 8px 16px;' +
+    'border-radius: 8px'
+)
 /**
  * CRITICAL: Load remote config FIRST for cloud builds to ensure
  * window.__CONFIG__is available for all modules during initialization
@@ -86,9 +87,7 @@ app
           name: 'primevue',
           order: 'theme, base, primevue'
         },
-        // This is a workaround for the issue with the dark mode selector
-        // https://github.com/primefaces/primevue/issues/5515
-        darkModeSelector: ':root'
+        darkModeSelector: '.dark-theme'
       }
     }
   })

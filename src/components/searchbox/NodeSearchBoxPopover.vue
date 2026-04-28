@@ -6,7 +6,7 @@
       :dismissable-mask="dismissable"
       :pt="{
         root: {
-          class: 'invisible-dialog-root',
+          class: ['invisible-dialog-root', { 'dark-theme': isDarkTheme }],
           role: 'search'
         },
         mask: { class: 'node-search-box-dialog-mask' },
@@ -48,6 +48,7 @@ import { useCanvasStore } from '@/renderer/core/canvas/canvasStore'
 import { useLitegraphService } from '@/services/litegraphService'
 import type { ComfyNodeDefImpl } from '@/stores/nodeDefStore'
 import { useNodeDefStore } from '@/stores/nodeDefStore'
+import { useColorPaletteStore } from '@/stores/workspace/colorPaletteStore'
 import { useSearchBoxStore } from '@/stores/workspace/searchBoxStore'
 import { LinkReleaseTriggerAction } from '@/types/searchBoxTypes'
 import type { FuseFilterWithValue } from '@/utils/fuseUtil'
@@ -61,8 +62,12 @@ let disconnectOnReset = false
 const settingStore = useSettingStore()
 const searchBoxStore = useSearchBoxStore()
 const litegraphService = useLitegraphService()
+const colorPaletteStore = useColorPaletteStore()
 
 const { visible, newSearchBoxEnabled } = storeToRefs(searchBoxStore)
+const isDarkTheme = computed(
+  () => !colorPaletteStore.completedActivePalette.light_theme
+)
 const dismissable = ref(true)
 function getNewNodeLocation(): Point {
   return triggerEvent
