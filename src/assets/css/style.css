@@ -1,5 +1,12 @@
 @import '@comfyorg/design-system/css/style.css';
 
+.p-autocomplete-overlay,
+.p-autocomplete-input-multiple {
+  --p-autocomplete-background: var(--comfy-input-bg);
+  --p-autocomplete-overlay-background: var(--comfy-menu-bg);
+  color: var(--input-text);
+}
+
 .litegraph.litecontextmenu,
 .litegraph.litesearchbox {
   background-color: #2e2e2e;
