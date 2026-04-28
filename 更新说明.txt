@@ -1,0 +1,43 @@
+1）Settings 初始化重试行为（启动时延风险）
+- 文件：src/platform/settings/settingStore.ts
+- 背景：启动阶段加载 settings 时，原逻辑使用指数退避重试。
+- 解决的问题：网络偶发抖动时会显著拉长启动等待时间，增加 iframe ready 信号延迟甚至超时的概率。
+- 目标效果：减少初始化阻塞，提高在父级超时窗口内完成初始化并发出 ready 信号的概率。
+
+2）Service Worker 缓存 extensions 资源
+- 文件：src/service-worker.js
+- 改动：新增对 /extensions/** GET 请求的 CacheFirst 缓存策略。
+- 缓存分组：extensions 运行时缓存组。
+
+3）extensions 缓存版本化能力
+- 文件：src/services/pwa/runtimeCacheProtocol.ts
+- 改动：
+  - 新增 runtime cache group：extensions
+  - 新增缓存前缀：comfyui-frontend-extensions
+  - extensions 缓存版本号改为使用 __COMFYUI_EXTENSIONS_VERSION__
+
+4）Service Worker 路径匹配调整
+- 文件：src/services/pwa/serviceWorkerPaths.ts
+- 改动：
+  - 从 bypass 列表移除 /extensions
+  - 新增 isExtensionPath(pathname, scopePath) 路径匹配方法
+
+5）构建时注入 extensions 版本号
+- 文件：vite.config.mts
+- 改动：新增 EXTENSIONS_VERSION 版本来源：
+  - 优先使用 process.env.EXTENSIONS_VERSION
+  - 未设置时自动生成到秒级的时间戳字符串
+- 新增 define 常量：__COMFYUI_EXTENSIONS_VERSION__
+
+6）全局类型声明
+- 文件：global.d.ts
+- 新增：declare const __COMFYUI_EXTENSIONS_VERSION__: string
+
+当前缓存失效机制（核心）
+- /extensions 资源 URL 本身不改。
+- 通过 __COMFYUI_EXTENSIONS_VERSION__ 变化来改变缓存桶名称。
+- 新 SW 激活时会清理旧版本 runtime cache。
+- 结果：重新构建并部署后，客户端会替换旧的 extensions 缓存并拉取新资源。
+
+运维说明
+- 当三方插件更新后，如需让客户端拉到最新 /extensions 资源，需要触发一次前端构建/部署（或手动变更 EXTENSIONS_VERSION）。
